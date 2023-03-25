@@ -19,9 +19,9 @@ public class Payment {
     public Payment() {
     }
 
-    public Payment(int id, Boolean paymentCompleted, PaymentMode paymentMode, Reservation reservation) {
+    public Payment(int id, Boolean isPaymentCompleted, PaymentMode paymentMode, Reservation reservation) {
         this.id = id;
-        this.isPaymentCompleted = paymentCompleted;
+        this.isPaymentCompleted = isPaymentCompleted;
         this.paymentMode = paymentMode;
         this.reservation = reservation;
     }
