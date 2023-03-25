@@ -15,7 +15,7 @@ public class Spot {
 
     private int pricePerHour;
 
-    private boolean occupied;
+    private boolean getOccupied;
 
     @ManyToOne
     @JoinColumn
@@ -31,7 +31,7 @@ public class Spot {
         this.id = id;
         this.spotType = spotType;
         this.pricePerHour = pricePerHour;
-        this.occupied = occupied;
+        this.getOccupied = occupied;
         this.parkingLot = parkingLot;
         this.reservationList = reservationList;
     }
@@ -60,12 +60,12 @@ public class Spot {
         this.pricePerHour = pricePerHour;
     }
 
-    public boolean isOccupied() {
-        return occupied;
+    public boolean isGetOccupied() {
+        return getOccupied;
     }
 
-    public void setOccupied(boolean occupied) {
-        this.occupied = occupied;
+    public void setGetOccupied(boolean getOccupied) {
+        this.getOccupied = getOccupied;
     }
 
     public ParkingLot getParkingLot() {
