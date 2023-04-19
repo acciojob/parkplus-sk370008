@@ -1,6 +1,7 @@
 package com.driver.services.impl;
 
 import com.driver.model.ParkingLot;
+import com.driver.model.Reservation;
 import com.driver.model.Spot;
 import com.driver.model.SpotType;
 import com.driver.repository.ParkingLotRepository;
@@ -31,7 +32,6 @@ public class ParkingLotServiceImpl implements ParkingLotService {
     @Override
     public Spot addSpot(int parkingLotId, Integer numberOfWheels, Integer pricePerHour) {
         Spot spot = new Spot();
-        ParkingLot parkingLot = parkingLotRepository1.findById(parkingLotId).get();
 
         if(numberOfWheels == 2){
             spot.setSpotType(SpotType.TWO_WHEELER);
@@ -41,15 +41,17 @@ public class ParkingLotServiceImpl implements ParkingLotService {
 
         spot.setPricePerHour(pricePerHour);
 
-        spot.setOccupied(true);
+        spot.setOccupied(false);
+
+        ParkingLot parkingLot = parkingLotRepository1.findById(parkingLotId).get();
 
         spot.setParkingLot(parkingLot);
 
         List<Spot> spots = parkingLot.getSpotList();
         spots.add(spot);
 
-        spotRepository1.save(spot);
-
+        parkingLotRepository1.save(parkingLot);
+//        spotRepository1.save(spot);
         return spot;
     }
 
@@ -60,16 +62,20 @@ public class ParkingLotServiceImpl implements ParkingLotService {
 
     @Override
     public Spot updateSpot(int parkingLotId, int spotId, int pricePerHour) {
+        ParkingLot parkingLot = parkingLotRepository1.findById(parkingLotId).get();
         Spot spot = spotRepository1.findById(spotId).get();
-        spot.getParkingLot().setId(parkingLotId);
-        spot.setId(spotId);
         spot.setPricePerHour(pricePerHour);
-        spotRepository1.save(spot);
+        parkingLotRepository1.save(parkingLot);
         return  spot;
     }
 
     @Override
     public void deleteParkingLot(int parkingLotId) {
-        parkingLotRepository1.deleteById(parkingLotId);
+        ParkingLot parkingLot = parkingLotRepository1.findById(parkingLotId).get();
+        List<Spot> spotList = parkingLot.getSpotList();
+        for (Spot spot : spotList){
+            spotRepository1.deleteById(spot.getId());
+        }
+        parkingLotRepository1.delete(parkingLot);
     }
 }
