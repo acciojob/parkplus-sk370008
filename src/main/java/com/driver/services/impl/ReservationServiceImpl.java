@@ -30,34 +30,34 @@ public class ReservationServiceImpl implements ReservationService {
         //Note that the vehicle can only be parked in a spot having a type equal to or larger than given vehicle
         //If parkingLot is not found, user is not found, or no spot is available, throw "Cannot make reservation" exception.
 
-
+    try {
         User user = userRepository3.findById(userId).get();
         ParkingLot parkingLot = parkingLotRepository3.findById(parkingLotId).get();
-        boolean isSpotAvailable = false;
         List<Spot> spotList = parkingLot.getSpotList();
+        boolean isSpotAvailable = false;
         SpotType vehicleType = null;
-        if (numberOfWheels == 2){
+        if (numberOfWheels == 2) {
             vehicleType = SpotType.TWO_WHEELER;
         } else if (numberOfWheels == 4) {
             vehicleType = SpotType.FOUR_WHEELER;
-        }else {
+        } else {
             vehicleType = SpotType.OTHERS;
         }
-        for (Spot spot : spotList){
-            if (spot.getOccupied() == true  && spot.getSpotType().equals(vehicleType)){
+        for (Spot spot : spotList) {
+            if (spot.getOccupied() == false && spot.getSpotType().equals(vehicleType)) {
                 isSpotAvailable = true;
             }
         }
 
         //Exception check
-        if (user == null || parkingLot == null || !isSpotAvailable){
+        if (user == null || parkingLot == null || !isSpotAvailable) {
             throw new Exception("Cannot make reservation");
         }
 
         //getting list of spots with given vehicle type and will sort it with according to price
         List<Spot> spotsWithGivenTypeAndSortedPrice = new ArrayList<>();
-        for (Spot spot : spotList){
-            if (spot.getSpotType().equals(vehicleType)){
+        for (Spot spot : spotList) {
+            if (spot.getSpotType().equals(vehicleType)) {
                 spotsWithGivenTypeAndSortedPrice.add(spot);
             }
         }
@@ -67,13 +67,22 @@ public class ReservationServiceImpl implements ReservationService {
         reservation.setNumberOfHours(timeInHours);
         reservation.setSpot(spotsWithGivenTypeAndSortedPrice.get(0));
         reservation.setUser(user);
+
 //        reservation.setPayment();
+
+
         spotsWithGivenTypeAndSortedPrice.get(0).setOccupied(true);
-        parkingLotRepository3.save(parkingLot);
-        reservationRepository3.save(reservation);
+        spotsWithGivenTypeAndSortedPrice.get(0).getReservationList().add(reservation);
+        user.getReservationList().add(reservation);
+
+        userRepository3.save(user);
+        spotRepository3.save(spotsWithGivenTypeAndSortedPrice.get(0));
 
 
         return reservation;
+    }catch (Exception e){
+        return null;
+    }
 
     }
 }
